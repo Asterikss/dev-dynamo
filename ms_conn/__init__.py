@@ -1,12 +1,19 @@
+from typing import Dict, List
 import streamlit as st
 import requests
 from urllib.parse import urlencode
-from config import Config
+from config import config
 import datetime
 from .classes import Token
+from .fetch_funcs import fetch_raw_emails
 from pprint import pprint
 
-config = Config.from_toml("config.toml")
+from bs4 import BeautifulSoup
+
+def extract_text_from_html(html_content):
+    soup = BeautifulSoup(html_content, "lxml")
+    text = soup.get_text(separator=' ', strip=True)
+    return text
 
 def generate_auth_url() -> str:
     params = {
@@ -31,24 +38,26 @@ def exchange_code_for_token(code: str) -> dict:
     return response.json()
 
 def get_user_emails(token: Token, num_emails: int = 10, unread: bool = False) -> dict:
-    headers = {
-        'Authorization': f'Bearer {token.access_token}',
-        'Content-Type': 'application/json'
-    }
-    params = {
-        '$top': num_emails
-    }
-    if unread:
-        params["$filter"] = "isRead eq false"
+    data = fetch_raw_emails(token, num_emails, unread)
+    if not data:
+        return []
+    
+    if not data.get("value"):
+        return []
 
-    response = requests.get(config.ms.url.mails, headers=headers, params=params)
-
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
-        print(f"Error: {response.status_code}, {response.text}")
-        return {}
+    emails: List[Dict[str, any]] = data["value"]
+    cleaned_emails = []
+    for mail in emails:
+        cleaned_emails.append({
+            "subject": mail["subject"],
+            "from": mail["from"],
+            "to_recipients": mail["toRecipients"],
+            "recieved_time": mail["receivedDateTime"],
+            "body": mail["body"]["content"] if mail["body"]["contentType"] != "html" else extract_text_from_html(mail["body"]["content"]),
+            "is_read": mail["isRead"]
+        })
+    
+    return cleaned_emails
     
 def get_my_calendar_events(token: Token, start_date: datetime.datetime=None, end_date: datetime.datetime=None):
     headers = {
