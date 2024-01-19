@@ -6,7 +6,7 @@ scope = "Mail.Read Calendars.Read User.Read"
 tenant_id = "ae65f568-0ceb-42c2-9dda-731b9c16e6b4"
 
 [ms.url]
-mails = "https://graph.microsoft.com/v1.0/me/message"
+mails = "https://graph.microsoft.com/v1.0/me/messages"
 auth = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
 token = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 calendar_events = 'https://graph.microsoft.com/v1.0/me/calendar/events'

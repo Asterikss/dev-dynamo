@@ -5,6 +5,7 @@ from config import Config
 import datetime
 from .classes import Token
 from pprint import pprint
+
 config = Config.from_toml("config.toml")
 
 def generate_auth_url() -> str:
