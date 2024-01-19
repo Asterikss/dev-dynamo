@@ -33,14 +33,10 @@ def main():
         if st.button('Fetch Emails'):
             user_emails = get_user_emails(token=token, num_emails=num_emails, unread=unread)
 
-            # Check if the response is successful
-            if isinstance(user_emails, dict):
-                emails = user_emails.get('value', [])
-                for email in emails:
-                    st.write(f"Subject: {email['subject']}")
-            else:
-                st.error(user_emails)
-
+        
+            for email in user_emails:
+                st.write(f"Subject: {email['subject']}")
+        
         if st.button('Fetch Events'):
             my_events = get_my_calendar_events(token)
 

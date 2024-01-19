@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Self
 from .classes import MSConfig
@@ -23,3 +23,5 @@ class Config:
             data: dict = json.load(json_file)
         
         return from_dict(data_class=Config, data=data)
+    
+config = Config.from_toml("config.toml")
