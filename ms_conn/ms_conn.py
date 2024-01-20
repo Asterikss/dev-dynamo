@@ -15,6 +15,8 @@ def main(num_emails: int, unread: bool):
                 st.session_state["auth_token"] = token
             else:
                 st.error("Failed to retrieve the token.")
+                st.query_params.pop("code")
+
         else:
             with st.container(border=True):
                 st.markdown(
