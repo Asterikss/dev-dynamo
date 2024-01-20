@@ -24,6 +24,9 @@ if "user_emails" not in st.session_state:
     st.warning("Login to get access to your Dashboard")
     st.stop()
 
+if "tasks_lists" not in st.session_state:
+    st.session_state.tasks_lists = ""
+
 st.header("Dashboard", anchor=False)
 
 urgent_mails, non_urgent_mails = utils.parse_mails(st.session_state.user_emails)
