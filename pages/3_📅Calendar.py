@@ -2,11 +2,12 @@ import streamlit as st
 
 import core.utils as utils
 
+utils.initialize("Calendar")
 
 st.title(":orange[Calendar]", anchor=False)
 
 if "user_emails" not in st.session_state:
-    st.warning("Log in to get access to your Calendar")
+    st.warning("Login to get access to your Calendar")
     st.stop()
 
 events = st.session_state.user_events

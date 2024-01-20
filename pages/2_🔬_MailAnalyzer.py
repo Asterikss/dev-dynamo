@@ -3,11 +3,12 @@ from streamlit.components.v1 import html
 
 import core.utils as utils
 
+utils.initialize("MailAnalyzer")
 
 st.title(":blue[MailAnalyzer]", anchor=False)
 
 if "user_emails" not in st.session_state:
-    st.warning("Log in to get access to your emails")
+    st.warning("Login to get access to your emails")
     st.stop()
 
 if "urgent_mails" not in st.session_state:
@@ -137,7 +138,7 @@ if st.session_state.mail_tuple:
             submitted = st.form_submit_button("Create a TODO")
 
         if submitted:
-            create_new_todo(st.session_state.auth_token, ) #TODO
+            create_new_todo(st.session_state.auth_token, )
             
 
 if st.session_state.mail:

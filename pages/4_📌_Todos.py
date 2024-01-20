@@ -1,9 +1,13 @@
 import streamlit as st
 
-st.title(":violet[Todos]", anchor=False)
+import core.utils as utils
+
+utils.initialize("Todos")
+
+st.title(":red[Todos]", anchor=False)
 
 if "user_emails" not in st.session_state:
-    st.warning("Log in to get access to your Calendar")
+    st.warning("Login to get access to your Calendar")
     st.stop()
 
 todo_list = st.session_state.tasks_lists
