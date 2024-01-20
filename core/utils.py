@@ -69,7 +69,7 @@ def get_page_bg_data(page: str) -> str:
             background-position: top left;
         }}
         [data-testid="stAppViewContainer"] > .main {{
-            background-image: url("data:image/png;base64,{get_img_as_base64("assets/blue1.jpg")}");
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/blue2.jpg")}");
             background-repeat: no-repeat;
             background-attachment: local;
         }}
