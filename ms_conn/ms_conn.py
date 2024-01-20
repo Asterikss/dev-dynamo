@@ -8,7 +8,7 @@ def main():
     if 'auth_token' not in st.session_state:
             # Generate the Microsoft login URL
             auth_link = generate_auth_url()
-            st.markdown(f'[Login with Microsoft]({auth_link})')
+            st.markdown(f'<a href="{auth_link}" target="_self">Login with Microsoft</a>', unsafe_allow_html=True)
 
             # Check if the authorization code is in the URL
             auth_code = st.query_params.get("code")
@@ -40,10 +40,7 @@ def main():
         if st.button('Fetch Events'):
             my_events = get_my_calendar_events(token)
 
-            if isinstance(my_events, dict):
-                events = my_events.get('value', [])
-                for event in events:
-                    pprint(event)
-                    st.write(f"Event: {event['subject']} on {event['start']['dateTime']}")
+            for event in my_events:
+                st.write(f"Event: {event['subject']} on {event['start']['dateTime']}")
             else:
                 st.error(my_events)
