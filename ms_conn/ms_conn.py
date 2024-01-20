@@ -1,5 +1,6 @@
 import streamlit as st
 from . import *
+import webbrowser
 
 
 def main(num_emails: int, unread: bool):
@@ -18,17 +19,10 @@ def main(num_emails: int, unread: bool):
                 st.query_params.pop("code")
 
         else:
-            with st.container(border=True):
-                st.markdown(
-                    f"""
-                    <div style="font-size: larger; font-weight: bold; font-family: Georgia;color: orange;">
-                    <a href="{generate_auth_url()}" target="_self">Login with Microsoft</a>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+            if st.button("Login with Microsoft"):
+                webbrowser.open(generate_auth_url(), new=0)
 
-                st.write("\n")
+            st.write("\n")
 
     if "auth_token" in st.session_state:
         token: Token = st.session_state["auth_token"]
