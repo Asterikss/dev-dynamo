@@ -26,7 +26,7 @@ def main(num_emails: int, unread: bool):
     if "auth_token" in st.session_state:
         token: Token = st.session_state["auth_token"]
 
-        if st.button("Fetch Emails and Events"):
+        if st.button("Fetch data"):
             st.session_state.user_emails = get_user_emails(
                 token=token, num_emails=num_emails, unread=unread
             )
