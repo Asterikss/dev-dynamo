@@ -121,7 +121,7 @@ def get_tasks_in_lists(token: Token):
         result[task_list["name"]] = get_tasks_in_list(token, task_list["id"])
     return result
 
-def create_new_todo(token: Token, task_list_id: str, task_title: str, details: str=None, due_date: str=None):
+def create_new_todo(token: Token, task_list_id: str, task_title: str, details: str=None, due_date: datetime.date=None):
     url = f"https://graph.microsoft.com/v1.0/me/todo/lists/{task_list_id}/tasks"
     headers = {
         "Authorization": f"Bearer {token.access_token}",
