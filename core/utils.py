@@ -59,12 +59,12 @@ def download_nltk_packages() -> None:
     #     print("Stopwords not found. Downloading...")
     #     nltk.download("stopwords")
 
-    # try:
-    #     nltk.data.find("tokenizers/punkt")
-    #     print("Punkt found")
-    # except LookupError:
-    #     print("Punkt not found. Downloading...")
-    #     nltk.download("punkt")
+    try:
+        nltk.data.find("tokenizers/punkt")
+        print("Punkt found")
+    except LookupError:
+        print("Punkt not found. Downloading...")
+        nltk.download("punkt")
 
     st.session_state.check_packages_once = "MariuszPudzianowski"
 
