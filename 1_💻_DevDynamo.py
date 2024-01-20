@@ -8,7 +8,7 @@ utils.initialize("DevDynamo")
 if "check_packages_once" not in st.session_state:
     utils.download_nltk_packages()
 
-st.title(":green[DevDynamo]", anchor=False)
+st.title(":violet[DevDynamo]", anchor=False)
 
 with st.sidebar:
     num_emails = st.slider("How many emails to fetch", 0, 20, 2)
@@ -19,11 +19,12 @@ ms_main(num_emails, unread)
 st.write("\n")
 st.write("\n")
 
-st.header("Dashboard", anchor=False)
 
 if "user_emails" not in st.session_state:
-    st.warning("Log in to get access to your Dashboard")
+    st.warning("Login to get access to your Dashboard")
     st.stop()
+
+st.header("Dashboard", anchor=False)
 
 urgent_mails, non_urgent_mails = utils.parse_mails(st.session_state.user_emails)
 

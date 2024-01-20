@@ -5,14 +5,120 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 import re
 from datetime import datetime
+import base64
 
 
 urgent_keywords = ["urgent", "attention", "asap", "immediate", "important", "outage"]
 urgent_senders = ["boss@example.com", "hr@example.com"]  # add an email / remove
 
 
+@st.cache_data
+def get_img_as_base64(file):
+    with open(file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+
+def get_page_bg_data(page: str) -> str:
+    if page == "DevDynamo":
+        return f"""
+        <style>
+        header {{visibility: hidden;}}
+        footer {{visibility: hidden;}}
+        [data-testid="stSidebar"] > div:first-child {{
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/dark_bg.jpg")}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: top left;
+        }}
+
+        [data-testid="stHeader"] {{
+            background: rgba(0,0,0,0);
+        }}
+
+        [data-testid="stAppViewContainer"] > .main {{
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/purple1.jpg")}");
+            background-position: 45% 0%; 
+            background-repeat: no-repeat;
+            background-attachment: local;
+        }}
+        </style>
+        """
+        # Use this to remove the empty space on top of the page
+        # #root > div:nth-child(1) > div > div > div > div > section > div {{padding-top: 0rem;}}
+        #
+        # Use this to remove "Deploy button (if header visibility is turned on"
+        # .stDeployButton {{
+        #         visibility: hidden;
+        #     }}
+        # This hids those stupid anchors ... but also removes pages from sidebar
+        # /* Hide the link button https://discuss.streamlit.io/t/hide-titles-link/19783/13 */
+        # .stApp a:first-child {{
+        #     display: none;
+        # }}
+    elif page == "MailAnalyzer":
+        return f"""
+        <style>
+        header {{visibility: hidden;}}
+        footer {{visibility: hidden;}}
+        #root > div:nth-child(1) > div > div > div > div > section > div {{padding-top: 0rem;}}
+        [data-testid="stSidebar"] > div:first-child {{
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/dark_bg.jpg")}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: top left;
+        }}
+        [data-testid="stAppViewContainer"] > .main {{
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/blue1.jpg")}");
+            background-repeat: no-repeat;
+            background-attachment: local;
+        }}
+        </style>
+        """
+    elif page == "Calendar":
+        return f"""
+        <style>
+        header {{visibility: hidden;}}
+        footer {{visibility: hidden;}}
+        #root > div:nth-child(1) > div > div > div > div > section > div {{padding-top: 0rem;}}
+        [data-testid="stSidebar"] > div:first-child {{
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/dark_bg.jpg")}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: top left;
+        }}
+        [data-testid="stAppViewContainer"] > .main {{
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/orange1.jpg")}");
+            background-repeat: no-repeat;
+            background-attachment: local;
+        }}
+        </style>
+        """
+    elif page == "Todos":
+        return f"""
+        <style>
+        header {{visibility: hidden;}}
+        footer {{visibility: hidden;}}
+        #root > div:nth-child(1) > div > div > div > div > section > div {{padding-top: 0rem;}}
+        [data-testid="stSidebar"] > div:first-child {{
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/dark_bg.jpg")}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: top left;
+        }}
+        [data-testid="stAppViewContainer"] > .main {{
+            background-image: url("data:image/png;base64,{get_img_as_base64("assets/red1.jpg")}");
+            background-repeat: no-repeat;
+            background-attachment: local;
+        }}
+        </style>
+        """
+    return ""
+    # background-position: 45% 0%; 
+
+
 def initialize(page: str) -> None:
-    if page == "Analyzer":
+    if page == "DevDynamo":
         st.set_page_config(
             page_title="DevDynamo",
             page_icon="💻",
@@ -24,19 +130,35 @@ def initialize(page: str) -> None:
                 'About': "# This is a header. This is an *extremely* cool app!"
             }
         )
-        # st.markdown(get_page_bg_data("DevDynamo"), unsafe_allow_html=True)
-        if "selected_text" not in st.session_state:
-            st.session_state.selected_text = ""
-        if "search_wiki" not in st.session_state:
-            st.session_state.search_wiki = False
-    elif page == "DataExplorer":
+        st.markdown(get_page_bg_data("DevDynamo"), unsafe_allow_html=True)
+        # if "selected_text" not in st.session_state:
+        #     st.session_state.selected_text = ""
+        # if "search_wiki" not in st.session_state:
+        #     st.session_state.search_wiki = False
+    elif page == "MailAnalyzer":
         st.set_page_config(
             page_title="MailAnalyzer",
             page_icon="🔬",
             layout="wide",
             initial_sidebar_state="expanded",
         )
-        # st.markdown(get_page_bg_data("MailAnalyzer"), unsafe_allow_html=True)
+        st.markdown(get_page_bg_data("MailAnalyzer"), unsafe_allow_html=True)
+    elif page == "Calendar":
+        st.set_page_config(
+            page_title="Calendar",
+            page_icon="📅",
+            layout="wide",
+            initial_sidebar_state="expanded",
+        )
+        st.markdown(get_page_bg_data("Calendar"), unsafe_allow_html=True)
+    elif page == "Todos":
+        st.set_page_config(
+            page_title="Todos",
+            page_icon="📌",
+            layout="wide",
+            initial_sidebar_state="expanded",
+        )
+        st.markdown(get_page_bg_data("Todos"), unsafe_allow_html=True)
 
 
 def download_nltk_packages() -> None:
