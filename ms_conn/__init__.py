@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 from config import config
 import datetime
 from .classes import Token
-from .fetch_funcs import fetch_raw_emails
+from .fetch_funcs import fetch_raw_emails, fetch_raw_calendart_events
 from pprint import pprint
 
 from bs4 import BeautifulSoup
@@ -37,7 +37,7 @@ def exchange_code_for_token(code: str) -> dict:
     response = requests.post(config.ms.url.token, data=data)
     return response.json()
 
-def get_user_emails(token: Token, num_emails: int = 10, unread: bool = False) -> dict:
+def get_user_emails(token: Token, num_emails: int = 10, unread: bool = False) -> List[Dict[str, any]]:
     data = fetch_raw_emails(token, num_emails, unread)
     if not data:
         return []
@@ -59,28 +59,19 @@ def get_user_emails(token: Token, num_emails: int = 10, unread: bool = False) ->
     
     return cleaned_emails
     
-def get_my_calendar_events(token: Token, start_date: datetime.datetime=None, end_date: datetime.datetime=None):
-    headers = {
-        'Authorization': f'Bearer {token.access_token}',
-        'Content-Type': 'application/json'
-    }
-
-    if not start_date:
-        start_date = datetime.datetime.utcnow().date()
-    if not end_date:
-        end_date = start_date + datetime.timedelta(weeks=2)
-
-    start_date = start_date.isoformat() + 'Z'
-    end_date = end_date.isoformat() + 'Z'
-
-    params = {
-        'startDateTime': start_date,
-        'endDateTime': end_date,
-    }
-
-    response = requests.get('https://graph.microsoft.com/v1.0/me/calendarView', headers=headers, params=params)
-
-    if response.status_code == 200:
-        return response.json()  # This contains the calendar events
-    else:
-        return f"Error: {response.status_code}, {response.text}"
+def get_my_calendar_events(token: Token, start_date: datetime.datetime=None, end_date: datetime.datetime=None) -> List[Dict[str, any]]:
+    data = fetch_raw_calendart_events(token, start_date, end_date)
+    if not data:
+        return []
+    
+    if not data.get("value"):
+        return []
+    
+    events: List[Dict[str, any]] = data["value"]
+    cleaned_events = []
+    pprint(events)
+    for event in events:
+        cleaned_events.append(event)
+    
+    return cleaned_events
+    
