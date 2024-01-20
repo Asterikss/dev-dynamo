@@ -32,7 +32,6 @@ if n_overlapping_tasks > 0:
 
         for event1, event2 in overlapping_tasks:
 
-            # with over_c1 and st.container(border=True):
             with over_c1:
                 with st.container(border=True):
                     st.write(f"Title: {event1['title']}")
