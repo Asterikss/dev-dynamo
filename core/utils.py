@@ -114,7 +114,6 @@ def get_page_bg_data(page: str) -> str:
         </style>
         """
     return ""
-    # background-position: 45% 0%; 
 
 
 def initialize(page: str) -> None:
@@ -124,17 +123,8 @@ def initialize(page: str) -> None:
             page_icon="💻",
             layout="wide",
             initial_sidebar_state="expanded",
-            menu_items={
-                'Get Help': 'https://www.extremelycoolapp.com/help',
-                'Report a bug': "https://www.extremelycoolapp.com/bug",
-                'About': "# This is a header. This is an *extremely* cool app!"
-            }
         )
         st.markdown(get_page_bg_data("DevDynamo"), unsafe_allow_html=True)
-        # if "selected_text" not in st.session_state:
-        #     st.session_state.selected_text = ""
-        # if "search_wiki" not in st.session_state:
-        #     st.session_state.search_wiki = False
     elif page == "MailAnalyzer":
         st.set_page_config(
             page_title="MailAnalyzer",
@@ -169,7 +159,6 @@ def download_nltk_packages() -> None:
     except LookupError:
         print("Wordnet not found. Downloading...")
         nltk.download("wordnet")
-    #
     # try:
     #     nltk.data.find("sentiment/vader_lexicon.zip")
     #     print("Vader_lexicon found")
@@ -222,17 +211,13 @@ def is_urgent(mail_dict: Dict) -> Tuple[int, int, List[str]]:
     final_num_keywords = 0
     urgent_info_table = []
 
-    # maby count how many to improve the metric
     processed_tokens = get_processed_tokens(mail_dict["subject"])
     num_keywords = 0
     for token in processed_tokens:
         if any(keyword == token for keyword in urgent_keywords):
             num_keywords += 1
 
-    # print(num_keywords)
-
     if num_keywords > 0:
-        # maby more than just 1
         urgent_score += 1
         final_num_keywords += num_keywords
         urgent_info_table.append("subject")
@@ -250,8 +235,7 @@ def is_urgent(mail_dict: Dict) -> Tuple[int, int, List[str]]:
         final_num_keywords += num_keywords
         urgent_info_table.append("subject")
 
-    if a := mail_dict["from"]["emailAddress"]["address"].lower() in urgent_senders:
-        print(a)
+    if mail_dict["from"]["emailAddress"]["address"].lower() in urgent_senders:
         urgent_score += 1
         urgent_info_table.append("sender")
 

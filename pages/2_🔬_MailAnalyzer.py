@@ -55,7 +55,7 @@ if "mail" not in st.session_state:
     st.session_state.mail = ""
 
 with st.sidebar:
-    st.info("You can click on any of your emails to get more informaction about them")
+    st.info("You can click on any of your emails to get more informaction about them and create a TODO from them")
 
 font = "Georgia"
 
@@ -103,7 +103,7 @@ with st.container(border=True):
                         args=(mail_tuple, True),
                         use_container_width=True
                     )
-                st.write(f"Urgency score: {urgency_score}/5")
+                st.write(f"Urgency score: {urgency_score}/3")
 
     else:
         st.markdown( f"""
