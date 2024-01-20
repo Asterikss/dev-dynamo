@@ -105,12 +105,25 @@ with st.container(border=True):
 
 if st.session_state.mail_tuple:
     mail_tuple = st.session_state.mail_tuple
-    with st.container(border=True):
-        st.write(mail_tuple[0])
-        st.write(mail_tuple[1])
+    with st.chat_message(name="human", avatar="📜"):
+        st.write(f"Subject: {mail_tuple[0]['subject']}")
+        st.write("From:")
+        st.write(f" - {mail_tuple[0]['from']['emailAddress']['name']}")
+        st.write(f" - {mail_tuple[0]['from']['emailAddress']['address']}")
+        st.write(f"Date: {mail_tuple[0]['recieved_time'][:10]}")
+        st.write(f"Time: {mail_tuple[0]['recieved_time'][11:16]}")
+        st.write(f"Content:")
+        st.write(mail_tuple[0]['body'])
 
 
 if st.session_state.mail:
     mail = st.session_state.mail
-    with st.container(border=True):
-        st.write(mail)
+    with st.chat_message(name="human", avatar="📜"):
+        st.write(f"Subject: {mail['subject']}")
+        st.write("From:")
+        st.write(f" - {mail['from']['emailAddress']['name']}")
+        st.write(f" - {mail['from']['emailAddress']['address']}")
+        st.write(f"Date: {mail['recieved_time'][:10]}")
+        st.write(f"Time: {mail['recieved_time'][11:16]}")
+        st.write(f"Content:")
+        st.write(mail['body'])
