@@ -19,9 +19,8 @@ def main(num_emails: int, unread: bool):
                 st.query_params.pop("code")
 
         else:
-            if st.button("Login with Microsoft"):
-                webbrowser.open(generate_auth_url(), new=0)
-
+            st.link_button("Login with Microsoft", generate_auth_url())
+            
             st.write("\n")
 
     if "auth_token" in st.session_state:

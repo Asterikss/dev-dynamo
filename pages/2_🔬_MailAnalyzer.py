@@ -2,6 +2,40 @@ import streamlit as st
 from streamlit.components.v1 import html
 
 import core.utils as utils
+from ms_conn import create_new_todo
+
+def create_mail_view(mail: dict):
+    with st.chat_message(name="human", avatar="📜"):
+        st.write(f"Subject: {mail['subject']}")
+        st.write("From:")
+        st.write(f" - {mail['from']['emailAddress']['name']}")
+        st.write(f" - {mail['from']['emailAddress']['address']}")
+        st.write(f"Date: {mail['recieved_time'][:10]}")
+        st.write(f"Time: {mail['recieved_time'][11:16]}")
+        st.write(f"Content:")
+        html(mail['html_body'], height=300, scrolling=True)
+ 
+        importance = st.selectbox("Importance", ["low","normal", "high"], index=1)
+        title = st.text_input("Title", value=mail['subject'])
+        description = st.text_input("Description", placeholder="More detials")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        d = col1.date_input("Deadline", value=None)
+        task_bucket = col2.selectbox("Task bucket", [l["name"] for l in st.session_state.task_list_helper])
+        col3.write('')
+        col3.markdown('')
+        if col3.button("Upload TODO", use_container_width=True):
+            list_id = ""
+            for l in st.session_state.task_list_helper:
+                if task_bucket == l["name"]:
+                    list_id = l["id"]
+                    break
+            
+            
+            resp = create_new_todo(st.session_state.auth_token, list_id, title, description, importance, d)
+            if resp.status_code != 200 and resp.status_code != 201:
+                st.warning("Error: Couldnt upload new created TODO!")
+            else:
+                st.success("Success: Uploaded new TODO!")
 
 utils.initialize("MailAnalyzer")
 
@@ -67,6 +101,7 @@ with st.container(border=True):
                         key="urgent_" + str(i),
                         on_click=utils.focus_email,
                         args=(mail_tuple, True),
+                        use_container_width=True
                     )
                 st.write(f"Urgency score: {urgency_score}/5")
 
@@ -100,6 +135,7 @@ with st.container(border=True):
                     key="non_urgent_" + str(i),
                     on_click=utils.focus_email,
                     args=(mail, False),
+                    use_container_width=True
                 )
     else:
         st.markdown( f"""
@@ -110,45 +146,10 @@ with st.container(border=True):
 
 
 if st.session_state.mail_tuple:
-    mail_tuple = st.session_state.mail_tuple
-    with st.chat_message(name="human", avatar="📜"):
-        st.write(f"Subject: {mail_tuple[0]['subject']}")
-        st.write("From:")
-        st.write(f" - {mail_tuple[0]['from']['emailAddress']['name']}")
-        st.write(f" - {mail_tuple[0]['from']['emailAddress']['address']}")
-        st.write(f"Date: {mail_tuple[0]['recieved_time'][:10]}")
-        st.write(f"Time: {mail_tuple[0]['recieved_time'][11:16]}")
-        st.write(f"Content:")
-        html(mail_tuple[0]['html_body'], height=300, scrolling=True)
+    mail, *_ = st.session_state.mail_tuple
+    create_mail_view(mail=mail)
 
-
-    if st.button(
-            "Create a TODO",
-            # key="urgent_" + str(i),
-            # on_click=utils.focus_email,
-            # args=(mail_tuple, True),
-            ):
-        with st.form("email_form"):
-            task_bucket = st.selectbox("Task bucket", [l["name"] for l in st.session_state.task_list_helper])
-            title = st.text_input("Title", value=mail_tuple[0]['subject'])
-            description = st.text_input("Description")
-            d = st.date_input("When's your birthday")
-            importance = st.selectbox("Importance", ["normal", "high"])
-
-            submitted = st.form_submit_button("Create a TODO")
-
-        if submitted:
-            create_new_todo(st.session_state.auth_token, )
-            
 
 if st.session_state.mail:
     mail = st.session_state.mail
-    with st.chat_message(name="human", avatar="📜"):
-        st.write(f"Subject: {mail['subject']}")
-        st.write("From:")
-        st.write(f" - {mail['from']['emailAddress']['name']}")
-        st.write(f" - {mail['from']['emailAddress']['address']}")
-        st.write(f"Date: {mail['recieved_time'][:10]}")
-        st.write(f"Time: {mail['recieved_time'][11:16]}")
-        st.write(f"Content:")
-        html(mail['html_body'], height=300, scrolling=True)
+    create_mail_view(mail=mail)

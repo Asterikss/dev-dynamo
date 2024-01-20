@@ -121,7 +121,7 @@ def get_tasks_in_lists(token: Token):
         result[task_list["name"]] = get_tasks_in_list(token, task_list["id"])
     return result
 
-def create_new_todo(token: Token, task_list_id: str, task_title: str, details: str=None, due_date: datetime.date=None):
+def create_new_todo(token: Token, task_list_id: str, task_title: str, details: str=None, importance: str = "normal", due_date: datetime.date=None) -> requests.Response:
     url = f"https://graph.microsoft.com/v1.0/me/todo/lists/{task_list_id}/tasks"
     headers = {
         "Authorization": f"Bearer {token.access_token}",
@@ -131,8 +131,9 @@ def create_new_todo(token: Token, task_list_id: str, task_title: str, details: s
         "title": task_title,
         "body": {
             "contentType": "text",
-            "content": details if details else ""
-        }
+            "content": details if details else "",
+        },
+        "importance": importance
     }
     if due_date:
         data["dueDateTime"] = {
@@ -140,4 +141,4 @@ def create_new_todo(token: Token, task_list_id: str, task_title: str, details: s
             "timeZone": "UTC"
         }
     response = requests.post(url, headers=headers, json=data)
-    return response.json()
+    return response
