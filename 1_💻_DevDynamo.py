@@ -31,9 +31,10 @@ _, n_overlapping_tasks, n_tasks = utils.find_overlapping_tasks(st.session_state.
 
 st.session_state.urgent_mails = len(urgent_mails)
 
-todos = st.session_state.tasks_lists
+todo_list = st.session_state.tasks_lists
 
-st.write(todos)
+n_todos = sum(len(todos) for todos in todo_list.values())
+n_todos_high = sum(1 for todos in todo_list.values() for todo in todos if todo["importance"] == "high")
 
 c1, c2, c3 = st.columns(3)
 
@@ -45,4 +46,4 @@ with c2:
         st.metric(label="Conflicting events", value=n_overlapping_tasks, delta=f"out of {n_tasks}")
 with c3:
     with st.container(border=True):
-        st.metric(label="Screen time", value="25h", delta=+2)
+        st.metric(label="Todos", value=n_todos, delta=f"{n_todos_high} of high importance")
