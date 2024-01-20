@@ -11,7 +11,7 @@ if "check_packages_once" not in st.session_state:
 st.title(":violet[DevDynamo]", anchor=False)
 
 with st.sidebar:
-    num_emails = st.slider("How many emails to fetch", 0, 20, 2)
+    num_emails = st.slider("How many emails to fetch", 1, 60, 10)
     unread = st.checkbox('Fetch only unread emails')
 
 ms_main(num_emails, unread)
