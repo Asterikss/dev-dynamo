@@ -6,8 +6,10 @@ from nltk.tokenize import word_tokenize
 import re
 from datetime import datetime
 
+
 urgent_keywords = ["urgent", "attention", "asap", "immediate", "important", "outage"]
 urgent_senders = ["boss@example.com", "hr@example.com"]  # add an email / remove
+
 
 def initialize(page: str) -> None:
     if page == "Analyzer":
@@ -35,6 +37,7 @@ def initialize(page: str) -> None:
             initial_sidebar_state="expanded",
         )
         # st.markdown(get_page_bg_data("MailAnalyzer"), unsafe_allow_html=True)
+
 
 def download_nltk_packages() -> None:
     # nltk.data.path.append(os.getcwd() + "/nltk_data")
@@ -68,6 +71,7 @@ def download_nltk_packages() -> None:
 
     st.session_state.check_packages_once = "MariuszPudzianowski"
 
+
 def focus_email(mail_tuple: Tuple, urgent=False):
     if urgent:
         st.session_state.mail_tuple = mail_tuple
@@ -79,7 +83,6 @@ def focus_email(mail_tuple: Tuple, urgent=False):
 
 
 def get_processed_tokens(text) -> List[str]:
-    # print("---")
     text = re.sub(r"[^a-zA-Z\s]", "", text).lower()
 
     lemmer = WordNetLemmatizer()
@@ -87,11 +90,8 @@ def get_processed_tokens(text) -> List[str]:
     cleaned_tokens = [
         lemmer.lemmatize(token)
         for token in word_tokenize(text)
-        # if token not in get_stop_wrods()
     ]
-    # print(cleaned_tokens)
 
-    # print("---")
     return cleaned_tokens
 
 
@@ -115,19 +115,18 @@ def is_urgent(mail_dict: Dict) -> Tuple[int, int, List[str]]:
         final_num_keywords += num_keywords
         urgent_info_table.append("subject")
 
-    # processed_tokens = get_processed_tokens(mail_dict["body"])
-    # num_keywords = 0
-    # for token in processed_tokens:
-    #     if any(keyword == token for keyword in urgent_keywords):
-    #         num_keywords += 1
-    #
-    # # print(num_keywords)
-    #
-    # if num_keywords > 0:
-    #     # maby more than just 1
-    #     urgent_score += 1
-    #     final_num_keywords += num_keywords
-    #     urgent_info_table.append("subject")
+
+    processed_tokens = get_processed_tokens(mail_dict["body"])
+    num_keywords = 0
+
+    for token in processed_tokens:
+        if any(keyword == token for keyword in urgent_keywords):
+            num_keywords += 1
+
+    if num_keywords > 1:
+        urgent_score += 1
+        final_num_keywords += num_keywords
+        urgent_info_table.append("subject")
 
     if a := mail_dict["from"]["emailAddress"]["address"].lower() in urgent_senders:
         print(a)
