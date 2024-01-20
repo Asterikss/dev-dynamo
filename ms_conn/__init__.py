@@ -71,7 +71,14 @@ def get_my_calendar_events(token: Token, start_date: datetime.datetime=None, end
     cleaned_events = []
     pprint(events)
     for event in events:
-        cleaned_events.append(event)
+        cleaned_events.append({
+            "start_time": event["start"],
+            "finish_time": event["end"],
+            "title": event["subject"],
+            "is_cancelled": event["isCancelled"],
+            "is_all_day": event["isAllDay"],
+            "organizer": event["organizer"]
+        })
     
     return cleaned_events
     
