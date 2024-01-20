@@ -55,7 +55,7 @@ if "mail" not in st.session_state:
     st.session_state.mail = ""
 
 with st.sidebar:
-    st.info("You can click on any of your emails to get more informaction about them and create a TODO from them")
+    st.info("You can click on any of your emails to get more informaction about them and create a TODO")
 
 font = "Georgia"
 
@@ -104,6 +104,14 @@ with st.container(border=True):
                         use_container_width=True
                     )
                 st.write(f"Urgency score: {urgency_score}/3")
+                pipe = utils.get_phishing_pred()
+                output = pipe(mail["subject"] + mail["subject"])
+                st.write(output)
+                # lr_prediction = utils.predict_urgency(mail["body"])
+                # lr_prediction2 = utils.predict_urgency(mail["subject"])
+                # st.write(lr_prediction)
+                # st.write(lr_prediction2)
+
 
     else:
         st.markdown( f"""

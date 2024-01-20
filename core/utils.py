@@ -6,6 +6,8 @@ from nltk.tokenize import word_tokenize
 import re
 from datetime import datetime
 import base64
+import pickle
+from transformers import pipeline
 
 
 urgent_keywords = ["urgent", "attention", "asap", "immediate", "important", "outage"]
@@ -280,3 +282,39 @@ def find_overlapping_tasks(tasks):
                 overlapping_tasks.append((tasks[i], tasks[j]))
 
     return overlapping_tasks, len(overlapping_tasks), len(tasks)
+
+
+def preprocess_text(text):
+    text = text.lower()
+
+    text = re.sub('[^a-zA-Z\s]', '', text)
+
+    stopwords = ['the', 'a', 'an', 'is', 'are', 'was', 'were', 'will', 'would', 'should']
+
+    text = ' '.join([word for word in text.split() if word not in stopwords])
+
+    return text
+
+@st.cache_resource
+def get_lr_model():
+    return pickle.load(open("models/logistic_regression_model.sav", "rb"))
+
+
+@st.cache_resource
+def get_vectorizer():
+    return pickle.load(open("models/vectorizer.sav", "rb"))
+
+
+def predict_urgency(body):
+
+    body = preprocess_text(body)
+
+    X_new = get_vectorizer().transform([body])
+
+    urgency = get_lr_model().predict(X_new)[0]
+
+    return urgency
+
+@st.cache_resource
+def get_phishing_pred():
+    return pipeline("text-classification", model="ealvaradob/bert-finetuned-phishing")
