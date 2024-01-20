@@ -1,14 +1,19 @@
 import streamlit as st
 from . import *
 
-def main():
-    # Streamlit UI
-    st.title("Microsoft Calendar Events")
+def main(num_emails: int, unread: bool):
 
     if 'auth_token' not in st.session_state:
-            # Generate the Microsoft login URL
-            auth_link = generate_auth_url()
-            st.markdown(f'<a href="{auth_link}" target="_self">Login with Microsoft</a>', unsafe_allow_html=True)
+
+            with st.container(border=True):
+                st.markdown( f"""
+                <div style="font-size: larger; font-weight: bold; font-family: Georgia;color: orange;">
+                <a href="{generate_auth_url()}" target="_self">Login with Microsoft</a>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.write("\n")
+
 
             # Check if the authorization code is in the URL
             auth_code = st.query_params.get("code")
@@ -18,28 +23,13 @@ def main():
                 token = Token.from_dict(token)
                 if token:
                     st.session_state['auth_token'] = token
-                    st.success('Logged in successfully.')
                 else:
                     st.error('Failed to retrieve the token.')
 
     if 'auth_token' in st.session_state:
         token: Token = st.session_state["auth_token"]
-        # Adding a number input for the number of emails to fetch
-        num_emails = st.number_input('Number of emails to fetch', min_value=1, max_value=100, value=10)
 
-            # Adding a checkbox for fetching only unread emails
-        unread = st.checkbox('Fetch only unread emails')
-
-        if st.button('Fetch Emails'):
-            user_emails = get_user_emails(token=token, num_emails=num_emails, unread=unread)
-
-        
-            for email in user_emails:
-                st.write(f"Subject: {email['subject']}")
-        
-        if st.button('Fetch Events'):
-            my_events = get_my_calendar_events(token)
-
-            for event in my_events:
-                st.write(f"Event: {event['title']} on {event['start_time']['dateTime']}")
-    
+        if st.button("Fetch Emails and Events"):
+            st.session_state.user_emails = get_user_emails(token=token, num_emails=num_emails, unread=unread)
+            st.session_state.user_events = get_my_calendar_events(token)
+            st.session_state.current_num_emails = num_emails
