@@ -111,7 +111,7 @@ def get_tasks_in_list(token: Token, list_id: str):
     return [{
         "title": task["title"],
         "importance": task["importance"],
-        "due_date_time": task["dueDateTime"]
+        "due_date_time": task.get("dueDateTime", None)
     } for task in tasks]
 
 def get_tasks_in_lists(token: Token):
