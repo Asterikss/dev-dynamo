@@ -29,8 +29,11 @@ urgent_mails, non_urgent_mails = utils.parse_mails(st.session_state.user_emails)
 
 _, n_overlapping_tasks, n_tasks = utils.find_overlapping_tasks(st.session_state.user_events)
 
-
 st.session_state.urgent_mails = len(urgent_mails)
+
+todos = st.session_state.tasks_lists
+
+st.write(todos)
 
 c1, c2, c3 = st.columns(3)
 
