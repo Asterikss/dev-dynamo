@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit.components.v1 import html
 
 import core.utils as utils
 
@@ -29,8 +30,12 @@ st.session_state.urgent_mails = len(urgent_mails)
 
 mails_sorted = sorted(urgent_mails, key=lambda x: x[1], reverse=True)
 
+task_list_helper = st.session_state.task_list_helper
+
+# with st.container(border=True):
+    # st.metric(label="Urgent mails", value=st.session_state.urgent_mails)
 with st.container(border=True):
-    st.metric(label="Urgent mails", value=st.session_state.urgent_mails)
+    st.metric(label="Urgent emails", value=st.session_state.urgent_mails, delta=f"out of {st.session_state.current_num_emails}")
 
 st.write("\n")
 
@@ -113,8 +118,27 @@ if st.session_state.mail_tuple:
         st.write(f"Date: {mail_tuple[0]['recieved_time'][:10]}")
         st.write(f"Time: {mail_tuple[0]['recieved_time'][11:16]}")
         st.write(f"Content:")
-        st.write(mail_tuple[0]['body'])
+        html(mail_tuple[0]['html_body'], height=300, scrolling=True)
 
+
+    if st.button(
+            "Create a TODO",
+            # key="urgent_" + str(i),
+            # on_click=utils.focus_email,
+            # args=(mail_tuple, True),
+            ):
+        with st.form("email_form"):
+            task_bucket = st.selectbox("Task bucket", [l["name"] for l in st.session_state.task_list_helper])
+            title = st.text_input("Title", value=mail_tuple[0]['subject'])
+            description = st.text_input("Description")
+            d = st.date_input("When's your birthday")
+            importance = st.selectbox("Importance", ["normal", "high"])
+
+            submitted = st.form_submit_button("Create a TODO")
+
+        if submitted:
+            create_new_todo(st.session_state.auth_token, ) #TODO
+            
 
 if st.session_state.mail:
     mail = st.session_state.mail
@@ -126,4 +150,4 @@ if st.session_state.mail:
         st.write(f"Date: {mail['recieved_time'][:10]}")
         st.write(f"Time: {mail['recieved_time'][11:16]}")
         st.write(f"Content:")
-        st.write(mail['body'])
+        html(mail['html_body'], height=300, scrolling=True)
