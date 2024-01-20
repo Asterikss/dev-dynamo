@@ -18,8 +18,6 @@ n_todos_high = sum(1 for todos in todo_list.values() for todo in todos if todo["
 with st.container(border=True):
     st.metric(label="Todos", value=n_todos, delta=f"{n_todos_high} of high importance")
 
-st.write(todo_list)
-
 with st.container(border=True):
     for todo_topic in todo_list.keys():
         if todo_list[todo_topic]:
