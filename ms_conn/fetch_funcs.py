@@ -48,3 +48,19 @@ def fetch_raw_calendart_events(token: Token, start_date: datetime.datetime=None,
         return response.json()  # This contains the calendar events
     else:
         return f"Error: {response.status_code}, {response.text}"
+    
+def fetch_tasks_in_list(token: Token, list_id):
+    url = f"https://graph.microsoft.com/v1.0/me/todo/lists/{list_id}/tasks"
+    headers = {
+        "Authorization": f"Bearer {token.access_token}"
+    }
+    response = requests.get(url, headers=headers)
+    return response.json()
+
+def fetch_task_lists(token: Token):
+    url = "https://graph.microsoft.com/v1.0/me/todo/lists"
+    headers = {
+        "Authorization": f"Bearer {token.access_token}"
+    }
+    response = requests.get(url, headers=headers)
+    return response.json()
