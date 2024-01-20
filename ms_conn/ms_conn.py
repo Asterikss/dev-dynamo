@@ -41,6 +41,5 @@ def main():
             my_events = get_my_calendar_events(token)
 
             for event in my_events:
-                st.write(f"Event: {event['subject']} on {event['start']['dateTime']}")
-            else:
-                st.error(my_events)
+                st.write(f"Event: {event['title']} on {event['start_time']['dateTime']}")
+    
