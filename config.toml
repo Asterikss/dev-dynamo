@@ -2,7 +2,7 @@
 client_id = "e985e7ff-c1de-46c2-833c-77614fde5f78"
 client_secret = "Tnr8Q~lVOLShqTq_dBoysShf-~vrvNMaloZn3br2"
 redirect_uri = "http://localhost:8501"
-scope = "Mail.Read Calendars.Read User.Read"
+scope = "Tasks.ReadWrite Mail.Read Calendars.Read User.Read"
 tenant_id = "ae65f568-0ceb-42c2-9dda-731b9c16e6b4"
 
 [ms.url]

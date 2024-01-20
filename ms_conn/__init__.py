@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 from config import config
 import datetime
 from .classes import Token
-from .fetch_funcs import fetch_raw_emails, fetch_raw_calendart_events
+from .fetch_funcs import fetch_raw_emails, fetch_raw_calendart_events, fetch_task_lists, fetch_tasks_in_list
 from pprint import pprint
 
 from bs4 import BeautifulSoup
@@ -53,6 +53,7 @@ def get_user_emails(token: Token, num_emails: int = 10, unread: bool = False) ->
             "from": mail["from"],
             "to_recipients": mail["toRecipients"],
             "recieved_time": mail["receivedDateTime"],
+            "html_body": mail["body"]["content"],
             "body": mail["body"]["content"] if mail["body"]["contentType"] != "html" else extract_text_from_html(mail["body"]["content"]),
             "is_read": mail["isRead"]
         })
@@ -69,7 +70,6 @@ def get_my_calendar_events(token: Token, start_date: datetime.datetime=None, end
     
     events: List[Dict[str, any]] = data["value"]
     cleaned_events = []
-    pprint(events)
     for event in events:
         cleaned_events.append({
             "start_time": event["start"],
@@ -82,3 +82,61 @@ def get_my_calendar_events(token: Token, start_date: datetime.datetime=None, end
     
     return cleaned_events
     
+def get_task_lists(token: Token):
+    data = fetch_task_lists(token)
+    if not data:
+        return []
+    
+    if not data.get("value"):
+        return []
+    
+    task_lists: List[Dict[str, any]] = data["value"]
+    cleaned_lists = [
+        {
+            "name": l["displayName"],
+            "id": l["id"]
+        } for l in task_lists]
+    return cleaned_lists
+    
+    
+def get_tasks_in_list(token: Token, list_id: str):
+    data = fetch_tasks_in_list(token=token, list_id=list_id)
+    if not data:
+        return []
+    
+    if not data.get("value"):
+        return []
+    
+    tasks: List[Dict[str, any]] = data["value"]
+    return [{
+        "title": task["title"],
+        "importance": task["importance"],
+        "due_date_time": task["dueDateTime"]
+    } for task in tasks]
+
+def get_tasks_in_lists(token: Token):
+    task_lists = get_task_lists(token)
+    result = {}
+    for task_list in task_lists:
+        result[task_list["name"]] = get_tasks_in_list(token, task_list["id"])
+
+def create_new_todo(token: Token, task_list_id: str, task_title: str, details: str=None, due_date: str=None):
+    url = f"https://graph.microsoft.com/v1.0/me/todo/lists/{task_list_id}/tasks"
+    headers = {
+        "Authorization": f"Bearer {token.access_token}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "title": task_title,
+        "body": {
+            "contentType": "text",
+            "content": details if details else ""
+        }
+    }
+    if due_date:
+        data["dueDateTime"] = {
+            "dateTime": due_date.isoformat(),
+            "timeZone": "UTC"
+        }
+    response = requests.post(url, headers=headers, json=data)
+    return response.json()
