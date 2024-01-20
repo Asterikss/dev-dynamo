@@ -40,3 +40,4 @@ def main(num_emails: int, unread: bool):
             st.session_state.user_events = get_my_calendar_events(token)
             st.session_state.current_num_emails = num_emails
             st.session_state.tasks_lists = get_tasks_in_lists(token)
+            st.session_state.task_list_helper = get_task_lists(token)
