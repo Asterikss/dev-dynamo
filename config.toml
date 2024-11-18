@@ -1,0 +1,12 @@
+[ms]
+client_id = ""
+client_secret = ""
+redirect_uri = "http://localhost:8501"
+scope = "Tasks.ReadWrite Mail.Read Calendars.Read User.Read"
+tenant_id = ""
+
+[ms.url]
+mails = "https://graph.microsoft.com/v1.0/me/messages"
+auth = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
+token = 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+calendar_events = 'https://graph.microsoft.com/v1.0/me/calendar/events'
